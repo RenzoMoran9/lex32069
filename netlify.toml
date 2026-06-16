@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# El runtime oficial de Next.js para Netlify (se instala automáticamente,
+# pero lo declaramos explícito para evitar sorpresas).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Las funciones de las rutas API necesitan más tiempo del default (10s)
+# porque inyectan el texto completo de los PDFs como contexto a Gemini.
+[functions]
+  included_files = ["docs/**", ".context-cache/**"]
