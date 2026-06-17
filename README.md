@@ -57,15 +57,17 @@ Abre `.env.local` y pega tu clave:
 ```env
 GEMINI_API_KEY=tu_key_real_aqui
 PDF_DIR=./docs
-GEMINI_MODEL=gemini-2.5-pro
+GEMINI_MODEL=gemini-2.5-flash
 MAX_CONTEXT_CHARS=3500000
 ```
 
-### ⚠️ Importante: billing y modelos
+### ⚠️ Importante: billing y costo por modelo
 
-Los dos PDFs juntos suman **~345.000 tokens** y se inyectan completos en cada llamada. Esto **requiere tener el billing activado** en la API de Gemini:
+Los dos PDFs juntos suman **~345.000 tokens** y se inyectan completos en cada llamada. Esto **requiere tener el billing activado** en la API de Gemini. El modelo define el costo:
 
-- **Con billing (pago por uso, recomendado):** usa `GEMINI_MODEL=gemini-2.5-pro` (o `gemini-2.5-flash` para más velocidad/menor costo). Contexto completo, sin límite práctico de tokens/minuto. El costo es de centavos por consulta.
+- **`gemini-2.5-flash` (recomendado):** ~$0.03–0.05 por consulta. Ideal para un app de estudio con muchas llamadas. Calidad muy buena.
+- **`gemini-2.5-pro`:** respuestas algo mejores, pero **~$0.50 por consulta** (cada llamada reenvía los 345k tokens). Quema saldo rápido.
+- **Sin billing (free tier):** solo permite **250.000 tokens/minuto** con flash. Como el contexto completo no cabe, usa `MAX_CONTEXT_CHARS=900000` (recorta ~43% del Reglamento y limita a ~1 consulta/min).
 - **Sin billing (free tier):** el free tier solo permite **250.000 tokens/minuto** con `gemini-2.5-flash`. Como el contexto completo no cabe, debes usar:
   ```env
   GEMINI_MODEL=gemini-2.5-flash

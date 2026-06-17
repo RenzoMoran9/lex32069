@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Modal } from "@/components/Modal";
 import { Markdown } from "@/components/Markdown";
+import { CopyDownload } from "@/components/CopyDownload";
 
 const TOPICS = [
   { title: "Procedimientos de selección", icon: ClipboardList },
@@ -119,7 +120,17 @@ export function Resumenes() {
             <div className="skeleton h-3 w-3/4" />
           </div>
         ) : (
-          <Markdown>{content}</Markdown>
+          <>
+            {content && !content.startsWith("⚠️") && (
+              <div className="mb-3 flex justify-end border-b border-border pb-2">
+                <CopyDownload
+                  text={content}
+                  filename={`resumen-${topic.toLowerCase().replace(/\s+/g, "-")}`}
+                />
+              </div>
+            )}
+            <Markdown>{content}</Markdown>
+          </>
         )}
       </Modal>
     </div>

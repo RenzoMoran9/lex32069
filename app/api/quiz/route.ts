@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { getContext } from "@/lib/context";
 import { getModel, assertApiKey } from "@/lib/gemini";
 import { buildSystemInstruction } from "@/lib/prompts";
@@ -14,9 +15,17 @@ type Quiz = {
   articulo: string;
 };
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     assertApiKey();
+
+    let topic = "";
+    try {
+      const body = await req.json();
+      if (body?.topic && typeof body.topic === "string") topic = body.topic;
+    } catch {
+      // sin body: pregunta aleatoria
+    }
 
     const context = await getContext();
     const model = getModel(
@@ -29,7 +38,9 @@ export async function POST() {
     // Una semilla aleatoria empuja al modelo a variar el artículo elegido.
     const seed = Math.floor(Math.random() * 100000);
 
-    const prompt = `Genera UNA pregunta de opción múltiple para estudiar la Ley 32069 o su Reglamento, basada en un artículo elegido al azar (semilla: ${seed}). Varía el tema respecto a preguntas anteriores.
+    const prompt = `Genera UNA pregunta de opción múltiple para estudiar la Ley 32069 o su Reglamento${
+      topic ? `, sobre el tema: "${topic}"` : ", basada en un artículo elegido al azar"
+    } (semilla: ${seed}). Varía el tema respecto a preguntas anteriores.
 
 Devuelve EXCLUSIVAMENTE este JSON (sin texto adicional):
 {

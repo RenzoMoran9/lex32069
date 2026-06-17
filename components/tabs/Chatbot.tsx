@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Menu, Plus, Send, Trash2, MessageSquare, Bot, User } from "lucide-react";
 import { Markdown } from "@/components/Markdown";
+import { CopyDownload } from "@/components/CopyDownload";
 import { cn } from "@/lib/utils";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -289,7 +290,7 @@ export function Chatbot({
             )}
 
             {messages.map((m, i) => (
-              <MessageBubble key={i} message={m} />
+              <MessageBubble key={i} message={m} showActions={m.role === "assistant"} />
             ))}
 
             {streaming && (
@@ -355,13 +356,26 @@ function Avatar({ role }: { role: "user" | "assistant" }) {
   );
 }
 
-function MessageBubble({ message }: { message: Message }) {
+function MessageBubble({
+  message,
+  showActions,
+}: {
+  message: Message;
+  showActions?: boolean;
+}) {
   return (
-    <div className="flex gap-3 py-4">
+    <div className="group flex gap-3 py-4">
       <Avatar role={message.role} />
       <div className="min-w-0 flex-1 pt-0.5">
         {message.role === "assistant" ? (
-          <Markdown>{message.content}</Markdown>
+          <>
+            <Markdown>{message.content}</Markdown>
+            {showActions && message.content.length > 40 && (
+              <div className="mt-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <CopyDownload text={message.content} filename="respuesta-lex32069" />
+              </div>
+            )}
+          </>
         ) : (
           <p className="whitespace-pre-wrap text-sm text-slate-100">
             {message.content}
